@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Resident Form{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">User Info</p>
+        <h1>{% if object %}Edit Resident{% else %}Add Resident{% endif %}</h1>
+    </div>
+</section>
+
+<form class="form-panel" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="form-actions">
+        <button type="submit">Save</button>
+        <a href="{% url 'resident_list' %}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

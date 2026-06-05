@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Application{% endblock %}
+
+{% block content %}
+<section class="form-panel">
+    <h1>Delete Application</h1>
+    <p>Are you sure you want to delete {{ object.service_name }} for {{ object.resident.full_name }}?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit">Delete</button>
+        <a href="{{ object.get_absolute_url }}">Cancel</a>
+    </form>
+</section>
+{% endblock %}

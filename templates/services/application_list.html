@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Applications{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Applications</p>
+        <h1>Documents, Registration, and Permits</h1>
+    </div>
+    <a class="button" href="{% url 'application_add' %}">Add Application</a>
+</section>
+
+<form class="filters" method="get">
+    <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Search resident, service, or purpose">
+    <select name="category">
+        <option value="">All categories</option>
+        {% for value, label in categories %}
+        <option value="{{ value }}" {% if request.GET.category == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    <select name="status">
+        <option value="">All statuses</option>
+        {% for value, label in statuses %}
+        <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Filter</button>
+    <a href="{% url 'application_list' %}">Reset</a>
+</form>
+
+<section class="panel">
+    <table>
+        <thead>
+            <tr>
+                <th>Resident</th>
+                <th>Category</th>
+                <th>Service</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for application in applications %}
+            <tr>
+                <td><a href="{{ application.get_absolute_url }}">{{ application.resident.full_name }}</a></td>
+                <td>{{ application.category }}</td>
+                <td>{{ application.service_name }}</td>
+                <td>{{ application.status }}</td>
+                <td class="actions">
+                    <a href="{% url 'application_edit' application.pk %}">Edit</a>
+                    <a href="{% url 'application_delete' application.pk %}">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No applications found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% include "includes/pagination.html" %}
+{% endblock %}

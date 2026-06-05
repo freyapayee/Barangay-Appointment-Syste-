@@ -1,0 +1,25 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Barangay Appointment System{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="{% url 'home' %}">Barangay Appointment System</a>
+        <nav>
+            <a href="{% url 'resident_list' %}">Residents</a>
+            <a href="{% url 'application_list' %}">Applications</a>
+            <a href="{% url 'appointment_list' %}">Appointments</a>
+            <a href="/admin/">Admin</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

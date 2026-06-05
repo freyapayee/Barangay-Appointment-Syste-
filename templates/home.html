@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Barangay Appointment System{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Homepage</p>
+        <h1>Barangay Appointment System</h1>
+    </div>
+    <a class="button" href="{% url 'appointment_add' %}">New Appointment</a>
+</section>
+
+<section class="stats-grid">
+    <article class="stat">
+        <span>Total Residents</span>
+        <strong>{{ resident_count }}</strong>
+    </article>
+    <article class="stat">
+        <span>Documents</span>
+        <strong>{{ document_count }}</strong>
+    </article>
+    <article class="stat">
+        <span>Registration</span>
+        <strong>{{ registration_count }}</strong>
+    </article>
+    <article class="stat">
+        <span>Permits</span>
+        <strong>{{ permit_count }}</strong>
+    </article>
+    <article class="stat">
+        <span>Appointments</span>
+        <strong>{{ appointment_count }}</strong>
+    </article>
+</section>
+
+<section class="content-grid">
+    <article class="panel">
+        <div class="panel-header">
+            <h2>User Info</h2>
+            <a href="{% url 'resident_add' %}">Add</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Address</th>
+                    <th>Gender</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for resident in recent_residents %}
+                <tr>
+                    <td><a href="{{ resident.get_absolute_url }}">{{ resident.full_name }}</a></td>
+                    <td>{{ resident.age }}</td>
+                    <td>{{ resident.address }}</td>
+                    <td>{{ resident.gender }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4">No residents registered yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+
+    <article class="panel">
+        <div class="panel-header">
+            <h2>Management</h2>
+            <a href="{% url 'application_list' %}">View all</a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Resident</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in recent_applications %}
+                <tr>
+                    <td>{{ application.resident.full_name }}</td>
+                    <td>{{ application.service_name }}</td>
+                    <td>{{ application.status }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3">No service applications yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <h2>Upcoming Appointments</h2>
+        <a href="{% url 'appointment_list' %}">View all</a>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Resident</th>
+                <th>Application</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in upcoming_appointments %}
+            <tr>
+                <td>{{ appointment.resident.full_name }}</td>
+                <td>{{ appointment.application.service_name|default:"General appointment" }}</td>
+                <td>{{ appointment.appointment_date }}</td>
+                <td>{{ appointment.appointment_time }}</td>
+                <td>{{ appointment.status }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No appointments scheduled yet.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

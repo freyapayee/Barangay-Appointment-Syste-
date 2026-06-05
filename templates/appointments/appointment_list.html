@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Appointments{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Appointments</p>
+        <h1>Appointment Records</h1>
+    </div>
+    <a class="button" href="{% url 'appointment_add' %}">Add Appointment</a>
+</section>
+
+<form class="filters" method="get">
+    <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Search resident, service, or notes">
+    <select name="status">
+        <option value="">All statuses</option>
+        {% for value, label in statuses %}
+        <option value="{{ value }}" {% if request.GET.status == value %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Filter</button>
+    <a href="{% url 'appointment_list' %}">Reset</a>
+</form>
+
+<section class="panel">
+    <table>
+        <thead>
+            <tr>
+                <th>Resident</th>
+                <th>Application</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments %}
+            <tr>
+                <td><a href="{{ appointment.get_absolute_url }}">{{ appointment.resident.full_name }}</a></td>
+                <td>{{ appointment.application.service_name|default:"General appointment" }}</td>
+                <td>{{ appointment.appointment_date }}</td>
+                <td>{{ appointment.appointment_time }}</td>
+                <td>{{ appointment.status }}</td>
+                <td class="actions">
+                    <a href="{% url 'appointment_edit' appointment.pk %}">Edit</a>
+                    <a href="{% url 'appointment_delete' appointment.pk %}">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No appointments found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% include "includes/pagination.html" %}
+{% endblock %}

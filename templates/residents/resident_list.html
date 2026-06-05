@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Residents{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Management</p>
+        <h1>Residents</h1>
+    </div>
+    <a class="button" href="{% url 'resident_add' %}">Add Resident</a>
+</section>
+
+<form class="filters" method="get">
+    <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Search name or address">
+    <button type="submit">Search</button>
+    <a href="{% url 'resident_list' %}">Reset</a>
+</form>
+
+<section class="panel">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Address</th>
+                <th>Gender</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for resident in residents %}
+            <tr>
+                <td><a href="{{ resident.get_absolute_url }}">{{ resident.full_name }}</a></td>
+                <td>{{ resident.age }}</td>
+                <td>{{ resident.address }}</td>
+                <td>{{ resident.gender }}</td>
+                <td class="actions">
+                    <a href="{% url 'resident_edit' resident.pk %}">Edit</a>
+                    <a href="{% url 'resident_delete' resident.pk %}">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="5">No residents found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% include "includes/pagination.html" %}
+{% endblock %}

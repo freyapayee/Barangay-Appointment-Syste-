@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}{{ resident.full_name }}{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Resident Profile</p>
+        <h1>{{ resident.full_name }}</h1>
+    </div>
+    <div class="actions">
+        <a class="button" href="{% url 'resident_edit' resident.pk %}">Edit</a>
+        <a class="button muted" href="{% url 'resident_delete' resident.pk %}">Delete</a>
+    </div>
+</section>
+
+<section class="details">
+    <p><strong>Age:</strong> {{ resident.age }}</p>
+    <p><strong>Address:</strong> {{ resident.address }}</p>
+    <p><strong>Previous Address:</strong> {{ resident.previous_address|default:"N/A" }}</p>
+    <p><strong>Marital Status:</strong> {{ resident.marital_status }}</p>
+    <p><strong>Occupation:</strong> {{ resident.occupation|default:"N/A" }}</p>
+    <p><strong>Gender:</strong> {{ resident.gender }}</p>
+    <p><strong>Year of Residency:</strong> {{ resident.year_of_residency }}</p>
+</section>
+{% endblock %}

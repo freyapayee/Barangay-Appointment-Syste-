@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Appointment Form{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Appointments</p>
+        <h1>{% if object %}Edit Appointment{% else %}Add Appointment{% endif %}</h1>
+    </div>
+</section>
+
+<form class="form-panel" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="form-actions">
+        <button type="submit">Save</button>
+        <a href="{% url 'appointment_list' %}">Cancel</a>
+    </div>
+</form>
+{% endblock %}
