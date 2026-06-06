@@ -4,9 +4,9 @@ from . import views
 
 
 urlpatterns = [
-    path("", views.AppointmentListView.as_view(), name="appointment_list"),
-    path("add/", views.AppointmentCreateView.as_view(), name="appointment_add"),
-    path("<int:pk>/", views.AppointmentDetailView.as_view(), name="appointment_detail"),
-    path("<int:pk>/edit/", views.AppointmentUpdateView.as_view(), name="appointment_edit"),
-    path("<int:pk>/delete/", views.AppointmentDeleteView.as_view(), name="appointment_delete"),
+    path("", views.appointment_list, name="appointment_list"),
+    path("add/", views.appointment_add, name="appointment_add"),
+    path("<int:pk>/", views.appointment_detail, name="appointment_detail"),
+    path("<int:pk>/edit/", views.appointment_edit, name="appointment_edit"),
+    path("<int:pk>/delete/", views.appointment_delete, name="appointment_delete"),
 ]

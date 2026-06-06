@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Application Form{% endblock %}
+
+{% block content %}
+<section class="page-heading">
+    <div>
+        <p class="eyebrow">Applications</p>
+        <h1>{% if object %}Edit Application{% else %}Add Application{% endif %}</h1>
+    </div>
+</section>
+
+<form class="form-panel" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="form-actions">
+        <button type="submit">Save</button>
+        <a href="{% url 'application_list' %}">Cancel</a>
+    </div>
+</form>
+
+<script>
+    const categorySelect = document.querySelector("[data-service-category]");
+    const documentSelect = document.querySelector("[data-document-type]");
+    const permitSelect = document.querySelector("[data-permit-type]");
+
+    function syncServiceFields() {
+        const category = categorySelect.value;
+
+        documentSelect.disabled = category !== "Document";
+        permitSelect.disabled = category !== "Permit";
+
+        if (category !== "Document") {
+            documentSelect.value = "";
+        }
+        if (category !== "Permit") {
+            permitSelect.value = "";
+        }
+    }
+
+    if (categorySelect && documentSelect && permitSelect) {
+        categorySelect.addEventListener("change", syncServiceFields);
+        syncServiceFields();
+    }
+</script>
+{% endblock %}

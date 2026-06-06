@@ -1,63 +1,65 @@
 from django.db.models import Q
-from django.urls import reverse_lazy
-from django.views.generic import CreateView, DeleteView, DetailView, ListView, UpdateView
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ServiceApplicationForm
 from .models import ServiceApplication
 
 
-class ApplicationListView(ListView):
-    model = ServiceApplication
-    template_name = "services/application_list.html"
-    context_object_name = "applications"
-    paginate_by = 10
+def application_list(request):
+    applications = ServiceApplication.objects.select_related("resident")
+    search = request.GET.get("q", "").strip()
+    category = request.GET.get("category", "").strip()
+    status = request.GET.get("status", "").strip()
 
-    def get_queryset(self):
-        queryset = super().get_queryset().select_related("resident")
-        query = self.request.GET.get("q", "").strip()
-        category = self.request.GET.get("category", "").strip()
-        status = self.request.GET.get("status", "").strip()
+    if search:
+        applications = applications.filter(
+            Q(resident__last_name__icontains=search)
+            | Q(resident__first_name__icontains=search)
+            | Q(document_type__icontains=search)
+            | Q(permit_type__icontains=search)
+            | Q(purpose__icontains=search)
+        )
+    if category:
+        applications = applications.filter(category=category)
+    if status:
+        applications = applications.filter(status=status)
 
-        if query:
-            queryset = queryset.filter(
-                Q(resident__last_name__icontains=query)
-                | Q(resident__first_name__icontains=query)
-                | Q(document_type__icontains=query)
-                | Q(permit_type__icontains=query)
-                | Q(purpose__icontains=query)
-            )
-        if category:
-            queryset = queryset.filter(category=category)
-        if status:
-            queryset = queryset.filter(status=status)
-        return queryset
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["categories"] = ServiceApplication.CATEGORY_CHOICES
-        context["statuses"] = ServiceApplication.STATUS_CHOICES
-        return context
+    context = {
+        "applications": applications,
+        "categories": ServiceApplication.CATEGORY_CHOICES,
+        "statuses": ServiceApplication.STATUS_CHOICES,
+    }
+    return render(request, "services/application_list.html", context)
 
 
-class ApplicationDetailView(DetailView):
-    model = ServiceApplication
-    template_name = "services/application_detail.html"
-    context_object_name = "application"
+def application_detail(request, pk):
+    application = get_object_or_404(ServiceApplication, pk=pk)
+    return render(request, "services/application_detail.html", {"application": application})
 
 
-class ApplicationCreateView(CreateView):
-    model = ServiceApplication
-    form_class = ServiceApplicationForm
-    template_name = "services/application_form.html"
+def application_add(request):
+    form = ServiceApplicationForm(request.POST or None)
+    if form.is_valid():
+        form.save()
+        return redirect("application_list")
+
+    return render(request, "services/application_form.html", {"form": form})
 
 
-class ApplicationUpdateView(UpdateView):
-    model = ServiceApplication
-    form_class = ServiceApplicationForm
-    template_name = "services/application_form.html"
+def application_edit(request, pk):
+    application = get_object_or_404(ServiceApplication, pk=pk)
+    form = ServiceApplicationForm(request.POST or None, instance=application)
+    if form.is_valid():
+        form.save()
+        return redirect("application_detail", pk=application.pk)
+
+    return render(request, "services/application_form.html", {"form": form, "object": application})
 
 
-class ApplicationDeleteView(DeleteView):
-    model = ServiceApplication
-    template_name = "services/application_confirm_delete.html"
-    success_url = reverse_lazy("application_list")
+def application_delete(request, pk):
+    application = get_object_or_404(ServiceApplication, pk=pk)
+    if request.method == "POST":
+        application.delete()
+        return redirect("application_list")
+
+    return render(request, "services/application_confirm_delete.html", {"object": application})

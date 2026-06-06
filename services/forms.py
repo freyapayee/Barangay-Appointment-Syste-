@@ -4,6 +4,19 @@ from .models import ServiceApplication
 
 
 class ServiceApplicationForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        category = self.data.get("category") or getattr(self.instance, "category", "")
+
+        self.fields["category"].widget.attrs.update({"data-service-category": "true"})
+        self.fields["document_type"].widget.attrs.update({"data-document-type": "true"})
+        self.fields["permit_type"].widget.attrs.update({"data-permit-type": "true"})
+
+        if category != "Document":
+            self.fields["document_type"].widget.attrs["disabled"] = "disabled"
+        if category != "Permit":
+            self.fields["permit_type"].widget.attrs["disabled"] = "disabled"
+
     class Meta:
         model = ServiceApplication
         fields = [
